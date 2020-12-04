@@ -22,6 +22,7 @@ import javax.swing.SwingUtilities;
 import javax.swing.border.LineBorder;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
+import javax.swing.UIManager;
 
 public class LoginDialog extends JFrame {
     /**
@@ -184,6 +185,8 @@ public class LoginDialog extends JFrame {
     }
 
     protected void onSuccess() {
+    	UIManager.put("OptionPane.background", Color.green);
+    	UIManager.put("Panel.background", Color.green);
         JOptionPane.showMessageDialog(LoginDialog.this, "Hi " + getUsername() + "! You have successfully logged in.",
                 "Login Success", JOptionPane.INFORMATION_MESSAGE);
         System.exit(0);
@@ -195,6 +198,9 @@ public class LoginDialog extends JFrame {
     }
 
     protected void onInvalidCredentials() {
+    	Color lightRed = new Color(255, 35, 35);
+    	UIManager.put("OptionPane.background", lightRed);
+    	UIManager.put("Panel.background", lightRed);
         JOptionPane.showMessageDialog(LoginDialog.this, "Invalid username or password", "Invalid Login", JOptionPane.ERROR_MESSAGE);
     }
 

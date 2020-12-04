@@ -31,6 +31,9 @@ public class LoginDialogTest {
 
     private LoginDialog login;
     private WebDriver driver;
+    private static  WebElement user, pass, loginBtn, cancelBtn;
+    private static  WebDriverWait wait;
+    private static List<WebElement> textComponents;
 
     @Before
     public void setUp() throws Exception {
@@ -49,6 +52,12 @@ public class LoginDialogTest {
         JavaProfile profile = new JavaProfile(LaunchMode.EMBEDDED);
         profile.setLaunchType(LaunchType.SWING_APPLICATION);
         driver = new JavaDriver(profile);
+        user = driver.findElement(By.cssSelector("text-field"));
+        pass = driver.findElement(By.cssSelector("password-field"));
+        loginBtn = driver.findElement(By.cssSelector("button[text='Login']"));
+        wait = new WebDriverWait(driver, 10);
+        cancelBtn = driver.findElement(By.cssSelector("button[text='Cancel']"));
+        textComponents = driver.findElements(By.className(JTextComponent.class.getName()));
     }
 
     @After
@@ -61,12 +70,8 @@ public class LoginDialogTest {
 
     @Test
     public void loginSuccess() {
-        WebElement user = driver.findElement(By.cssSelector("text-field"));
         user.sendKeys("bob");
-        WebElement pass = driver.findElement(By.cssSelector("password-field"));
         pass.sendKeys("secret");
-        WebElement loginBtn = driver.findElement(By.cssSelector("button[text='Login']"));
-        WebDriverWait wait = new WebDriverWait(driver, 10);
         wait.until(ExpectedConditions.elementToBeClickable(loginBtn));
         loginBtn.click();
         assertTrue(login.isSucceeded());
@@ -75,30 +80,21 @@ public class LoginDialogTest {
 
     @Test
     public void loginCancel() {
-        WebElement user = driver.findElement(By.cssSelector("text-field"));
         user.sendKeys("bob");
-        WebElement pass = driver.findElement(By.cssSelector("password-field"));
         pass.sendKeys("secret");
-        WebElement cancelBtn = driver.findElement(By.cssSelector("button[text='Cancel']"));
         cancelBtn.click();
         assertFalse(login.isSucceeded());
     }
 
     @Test
     public void loginInvalid() throws InterruptedException {
-        WebElement user = driver.findElement(By.cssSelector("text-field"));
         user.sendKeys("bob");
-        WebElement pass = driver.findElement(By.cssSelector("password-field"));
         pass.sendKeys("wrong");
-        WebElement loginBtn = driver.findElement(By.cssSelector("button[text='Login']"));
-        WebDriverWait wait = new WebDriverWait(driver, 10);
         wait.until(ExpectedConditions.elementToBeClickable(loginBtn));
         loginBtn.click();
         driver.switchTo().window("Invalid Login");
         driver.findElement(By.cssSelector("button[text='OK']")).click();
         driver.switchTo().window("Login");
-        user = driver.findElement(By.cssSelector("text-field"));
-        pass = driver.findElement(By.cssSelector("password-field"));
         assertEquals("", user.getText());
         assertEquals("", pass.getText());
     }
@@ -108,7 +104,6 @@ public class LoginDialogTest {
         // Check that all the text components (like text fields, password
         // fields, text areas) are associated
         // with a tooltip
-        List<WebElement> textComponents = driver.findElements(By.className(JTextComponent.class.getName()));
         for (WebElement tc : textComponents) {
             assertNotEquals(null, tc.getAttribute("toolTipText"));
         }
